@@ -75,7 +75,7 @@ def build_deck(level):
 
     deck = genanki.Deck(
         DECK_ID_BASE + int(level),
-        f"JLPT::N{level}",
+        f"JLPT N{level} Sentence Reading",
     )
 
     for item in sentences:

@@ -1,5 +1,3 @@
 # Anki
 
-## JLPT sentences
-
-Fetch sentences
+Custom Anki decks
