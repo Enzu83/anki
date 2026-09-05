@@ -149,6 +149,11 @@ def _is_known_word(token, data):
     return any(w in data["vocab"] or w in data["exceptions"] for w in words)
 
 
+def _is_exception_word(token, data):
+    words = (token["dictionary"], token["surface"])
+    return any(w in data["exceptions"] for w in words)
+
+
 # ============================================================
 # CHECKS
 # ============================================================
@@ -156,11 +161,16 @@ def _is_known_word(token, data):
 def check_kanji(tokens, data):
     """
     Every kanji used must belong to this level's kanji list, unless the
-    word it's part of is itself vocabulary for this level (e.g. 私 at N5)
-    or a named exception (e.g. 何時 at N5) — a word can be taught at a
-    given level while using a kanji that, in isolation, is classified
-    above it. Proper nouns (place/personal names) aren't covered by any
-    JLPT kanji list and are exempted.
+    word is a named exception (e.g. 私, 何時 at N5) — a handful of words
+    are taught at this level despite using a kanji that, in isolation,
+    is classified above it. Most vocabulary for this level (see
+    check_vocab) does use kanji outside this level's kanji list — that's
+    expected, real JLPT kanji lists are much shorter than the matching
+    vocabulary lists — so exceptions are deliberately curated by hand
+    rather than granted to every vocab.json word, to keep the kanji
+    actually appearing in sentences reasonably elementary. Proper nouns
+    (place/personal names) aren't covered by any JLPT kanji list and are
+    exempted.
     """
 
     for token in tokens:
@@ -168,7 +178,7 @@ def check_kanji(tokens, data):
         if token["pos"][1] == PROPER_NOUN_POS:
             continue
 
-        if _is_known_word(token, data):
+        if _is_exception_word(token, data):
             continue
 
         kanji = get_kanji(token["surface"])
